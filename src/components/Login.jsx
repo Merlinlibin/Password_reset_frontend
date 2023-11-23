@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 import "../styles/Login.css";
+import { Oval } from "react-loader-spinner";
 
 function Login({
   token,
@@ -17,6 +18,9 @@ function Login({
   const loginUrl = "https://loginbackend-7ar3.onrender.com/api/login/";
   const passref = useRef("");
   const eyeref = useRef("");
+  const errMailref = useRef("");
+  const errpassref = useRef("");
+  const [loading, setloading] = useState(false);
 
   const togglepass = () => {
     if (
@@ -32,16 +36,17 @@ function Login({
   };
   const userLogin = async () => {
     event.preventDefault();
+    setloading(true);
     console.log("Logging in user...");
 
     try {
       const response = await axios.post(loginUrl, logobj);
 
       const data = await response.data;
-
+      console.log(response);
       if (response.status === 200) {
         console.log("User logged in successfully");
-        console.log(data);
+        console.log(response.status);
         setlogobj({
           email: "",
           password: "",
@@ -53,12 +58,17 @@ function Login({
         window.localStorage.setItem("user", JSON.stringify(data));
       }
     } catch (e) {
-      console.log("Error logging in...", e);
+      console.log("Error logging in...", e.response.status);
+      if (e.response.status = 401) {
+        errMailref.current.className = "errMail d-block";
+        errpassref.current.className = "errpass d-block";
+      }
     }
+    setloading(false);
   };
   const handleregister = () => {
     event.preventDefault();
-    setregistered(false)
+    setregistered(false);
   };
   return (
     <div className="main">
@@ -78,6 +88,9 @@ function Login({
                   setlogobj({ ...logobj, email: e.target.value });
                 }}
               />
+              <div className="errMail d-none" ref={errMailref}>
+                email dosent exist please register!
+              </div>
             </div>
             <div className="form-group my-3">
               <label htmlFor="Password1">Password</label>
@@ -93,6 +106,9 @@ function Login({
                     setlogobj({ ...logobj, password: e.target.value });
                   }}
                 />
+                <div className="errpass d-none" ref={errpassref}>
+                  Password dosenot match!!!
+                </div>
                 <i
                   className="bi bi-eye-slash eye"
                   ref={eyeref}
@@ -100,7 +116,15 @@ function Login({
               </div>
             </div>
             <div className="mt-5 mb-2 text-center">
-              <button className="btn btn-primary my-2 ">Login</button>
+              <button className="btn btn-primary my-2 w-50 ">
+                {loading ? (
+                  <div className="d-flex alighn-items-center justify-content-center">
+                    <Oval color="white" height="25" width="25" />
+                  </div>
+                ) : (
+                  "Login"
+                )}
+              </button>
             </div>
           </form>
           <div className="text-center">

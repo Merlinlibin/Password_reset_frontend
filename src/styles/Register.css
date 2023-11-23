@@ -20,6 +20,9 @@
   position: relative;
   
 }
+.errMail{
+  color:red
+}
 .eye {
   position: absolute;
   top: 6px;

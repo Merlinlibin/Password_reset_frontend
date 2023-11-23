@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRe, useRef, useState } from "react";
 import "../styles/Register.css";
 import axios from "axios";
+import { Oval } from "react-loader-spinner";
 
 function Register({
   registered,
@@ -10,6 +11,8 @@ function Register({
 }) {
   const passref = useRef("");
   const eyeref = useRef("");
+  const errMailref = useRef("");
+  const [loading, setloading] = useState(false);
   const registerUrl = "https://loginbackend-7ar3.onrender.com/api/users/";
 
   const togglepass = () => {
@@ -26,7 +29,8 @@ function Register({
   };
 
   const handleRegister = async () => {
-    event.preventDefault();
+      event.preventDefault();
+      setloading(true);
     console.log("Logging in user...");
 
     try {
@@ -47,14 +51,18 @@ function Register({
         setregistered(true);
       }
     } catch (e) {
-      console.log("Error logging in...", e);
+      console.log("Error logging in...", e.response.request.status);
+      if (e.response.request.status === 409) {
+        errMailref.current.className = "errMail d-block";
       }
-      
-    };
-    const handlelogin = () => {
-        event.preventDefault();
+      }
+      setloading(false);
+  };
+  const handlelogin = () => {
+    event.preventDefault();
       setregistered(true);
-    };
+      
+  };
   return (
     <div className="main">
       <div className="container  sub">
@@ -94,6 +102,9 @@ function Register({
                 }
                 required
               />
+              <div className="errMail d-none" ref={errMailref}>
+                email already exist please login!
+              </div>
             </div>
             <div className="form-group my-3 ">
               <label htmlFor="phone">Phone</label>
@@ -137,8 +148,14 @@ function Register({
               </div>
             </div>
             <div className="mt-5 mb-2 text-center">
-              <button type="submit" className="btn btn-primary my-2 ">
-                Register
+              <button className="btn btn-primary my-2 w-50 ">
+                {loading ? (
+                  <div className="d-flex alighn-items-center justify-content-center">
+                    <Oval color="white" height="25" width="25" />
+                  </div>
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
           </form>
