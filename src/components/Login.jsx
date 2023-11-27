@@ -5,6 +5,7 @@ import axios from "axios";
 import "../styles/Login.css";
 import { Oval } from "react-loader-spinner";
 
+
 function Login({
   token,
   settoken,
@@ -21,6 +22,9 @@ function Login({
   const errMailref = useRef("");
   const errpassref = useRef("");
   const [loading, setloading] = useState(false);
+  const [popup, setpopup] = useState(false);
+  const [resetmail, setresetmail] = useState('');
+
 
   const togglepass = () => {
     if (
@@ -59,7 +63,7 @@ function Login({
       }
     } catch (e) {
       console.log("Error logging in...", e.response.status);
-      if (e.response.status = 401) {
+      if ((e.response.status = 401)) {
         errMailref.current.className = "errMail d-block";
         errpassref.current.className = "errpass d-block";
       }
@@ -69,6 +73,10 @@ function Login({
   const handleregister = () => {
     event.preventDefault();
     setregistered(false);
+  };
+  const handleresetpass = () => {
+    console.log(resetmail);
+    setresetmail('')
   };
   return (
     <div className="main">
@@ -93,7 +101,7 @@ function Login({
               </div>
             </div>
             <div className="form-group my-3">
-              <label htmlFor="Password1">Password</label>
+              <label htmlFor="Password">Password</label>
               <div className="pass">
                 <input
                   ref={passref}
@@ -128,10 +136,51 @@ function Login({
             </div>
           </form>
           <div className="text-center">
-            <p>
-              <i>Forget Password?</i>{" "}
-              <button className="forgetpassbtn">Reset Password</button>
-            </p>
+            <div>
+              <p>
+                <i>Forget Password?</i>{" "}
+                <button
+                  className="forgetpassbtn"
+                  onClick={() => setpopup(true)}>
+                  Reset Password
+                </button>
+              </p>
+            </div>
+            {popup ? (
+              <div className="popup_back ">
+                <div className="reset-popup ">
+                  <h3>
+                    <label htmlFor="resetpass" className="">
+                      Email
+                    </label>
+                  </h3>
+                  <div style={{ width: "80%" }}>
+                    <input
+                      type="email"
+                      className="form-control my-2 "
+                      name="resetpass"
+                      placeholder="enter your email...."
+                      value={resetmail}
+                      onChange={(e) => setresetmail(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <button
+                      className="btn btn-primary w-auto my-2 mx-1"
+                      onClick={handleresetpass}>
+                      Reset Password
+                    </button>
+                    <button
+                      className="btn btn-primary w-auto my-2 mx-1"
+                      onClick={() => setpopup(false)}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="text-center">
             <p>

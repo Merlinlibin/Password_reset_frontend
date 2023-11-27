@@ -133,6 +133,7 @@ function Register({
                   className="form-control my-2"
                   placeholder="Password"
                   value={registerFormData.psaawordHash}
+                  minLength={6}
                   onChange={(e) =>
                     setRegisterFormData({
                       ...registerFormData,

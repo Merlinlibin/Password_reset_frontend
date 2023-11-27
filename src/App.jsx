@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
-import Login from "./components/Login";
+import Login from "./components/login";
 
 function App() {
   const [registered, setregistered] = useState(false);
@@ -11,7 +11,7 @@ function App() {
     username: "",
     email: "",
     phone: "",
-    passwordHash: "",
+    password: "",
   });
   const [logobj, setlogobj] = useState({
     email: "",
