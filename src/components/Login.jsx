@@ -4,7 +4,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 import "../styles/Login.css";
 import { Oval } from "react-loader-spinner";
-
+import { useNavigate } from "react-router-dom";
 
 function Login({
   token,
@@ -13,18 +13,18 @@ function Login({
   setuser,
   logobj,
   setlogobj,
-  registered,
-  setregistered,
 }) {
   const loginUrl = "https://loginbackend-7ar3.onrender.com/api/login/";
+  const emailresetUrl = "https://loginbackend-7ar3.onrender.com/api/mailReset";
   const passref = useRef("");
   const eyeref = useRef("");
   const errMailref = useRef("");
   const errpassref = useRef("");
+  const resetmailref=useRef("")
   const [loading, setloading] = useState(false);
   const [popup, setpopup] = useState(false);
-  const [resetmail, setresetmail] = useState('');
-
+  const [resetmail, setresetmail] = useState("");
+  const navigate = useNavigate();
 
   const togglepass = () => {
     if (
@@ -39,44 +39,61 @@ function Login({
     }
   };
   const userLogin = async () => {
-    event.preventDefault();
-    setloading(true);
-    console.log("Logging in user...");
+          event.preventDefault();
+          setloading(true);
 
-    try {
-      const response = await axios.post(loginUrl, logobj);
+          try {
+            const response = await axios.post(loginUrl, logobj);
 
-      const data = await response.data;
-      console.log(response);
-      if (response.status === 200) {
-        console.log("User logged in successfully");
-        console.log(response.status);
-        setlogobj({
-          email: "",
-          password: "",
-        });
-        settoken(data.token);
-        setuser(data);
+            const data = await response.data;
+            console.log(data);
+            if (response.status === 200) {
+              console.log("User logged in successfully");
+              console.log(response.status);
+              setlogobj({
+                email: "",
+                password: "",
+              });
+              settoken(data.token);
+              setuser(data);
+              setloading(false);
+              window.localStorage.setItem("token", data.token);
+              window.localStorage.setItem("user", JSON.stringify(data));
+              if (window.localStorage.getItem("token")) {
+                return navigate("/home");
+              }
+            }
+          } catch (e) {
+            console.log("Error logging in...", e.response.status);
+            if ((e.response.status = 401)) {
+              errMailref.current.className = "errMail d-block";
+              errpassref.current.className = "errpass d-block";
+            }
+          }
+          
+        };
 
-        window.localStorage.setItem("token", data.token);
-        window.localStorage.setItem("user", JSON.stringify(data));
-      }
-    } catch (e) {
-      console.log("Error logging in...", e.response.status);
-      if ((e.response.status = 401)) {
-        errMailref.current.className = "errMail d-block";
-        errpassref.current.className = "errpass d-block";
-      }
-    }
-    setloading(false);
-  };
+
   const handleregister = () => {
-    event.preventDefault();
-    setregistered(false);
-  };
-  const handleresetpass = () => {
-    console.log(resetmail);
-    setresetmail('')
+          event.preventDefault();
+         navigate("/register");
+        };
+
+
+  const handleresetpass = async () => {
+        try {
+          console.log(resetmail);
+          const response = await axios.post(emailresetUrl, { email: resetmail });
+            if (response.status === 200) {
+              console.log("mail sent successfully");
+              console.log(response);
+              setresetmail("");
+            }
+        } catch (e) {
+          console.log("email dosent match please register", e.response.status);
+          resetmailref.current.style.visibility = "visible";
+          setresetmail("");
+        }
   };
   return (
     <div className="main">
@@ -87,6 +104,7 @@ function Login({
             <div className="form-group my-3 ">
               <label htmlFor="email">Email address</label>
               <input
+                required
                 type="email"
                 name="email"
                 className="form-control my-2"
@@ -104,6 +122,7 @@ function Login({
               <label htmlFor="Password">Password</label>
               <div className="pass">
                 <input
+                  required
                   ref={passref}
                   type="password"
                   name="password"
@@ -163,6 +182,14 @@ function Login({
                       value={resetmail}
                       onChange={(e) => setresetmail(e.target.value)}
                     />
+                  </div>
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "20px",
+                      visibility: "hidden",
+                    }} ref={resetmailref}>
+                    <p>! Invalid emailemail, please register</p>
                   </div>
                   <div>
                     <button

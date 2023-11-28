@@ -2,10 +2,10 @@ import React, { useRe, useRef, useState } from "react";
 import "../styles/Register.css";
 import axios from "axios";
 import { Oval } from "react-loader-spinner";
+import {  useNavigate } from "react-router-dom";
+
 
 function Register({
-  registered,
-  setregistered,
   registerFormData,
   setRegisterFormData,
 }) {
@@ -14,6 +14,8 @@ function Register({
   const errMailref = useRef("");
   const [loading, setloading] = useState(false);
   const registerUrl = "https://loginbackend-7ar3.onrender.com/api/users/";
+  const navigate = useNavigate();
+  
 
   const togglepass = () => {
     if (
@@ -31,7 +33,7 @@ function Register({
   const handleRegister = async () => {
       event.preventDefault();
       setloading(true);
-    console.log("Logging in user...");
+    console.log("Registering new user...");
 
     try {
       const response = await axios.post(registerUrl, registerFormData);
@@ -47,20 +49,22 @@ function Register({
           phone: "",
           password: "",
         });
-
-        setregistered(true);
+        navigate('/Login');
+       
       }
+      
     } catch (e) {
       console.log("Error logging in...", e.response.request.status);
       if (e.response.request.status === 409) {
         errMailref.current.className = "errMail d-block";
       }
-      }
-      setloading(false);
+    }
+    setloading(false);
+      
   };
   const handlelogin = () => {
     event.preventDefault();
-      setregistered(true);
+      navigate("/login");
       
   };
   return (

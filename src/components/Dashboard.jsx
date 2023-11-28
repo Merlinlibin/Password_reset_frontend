@@ -3,23 +3,18 @@ import axios from "axios";
 import "../styles/Dashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { useNavigate } from "react-router-dom";
 
-function Dashboard({
-  user,
-  setuser,
-  token,
-  settoken,
-  registered,
-  setregistered,
-}) {
-  const onLogout = () => {
-    setuser(null);
-    settoken(null);
+function Dashboard({}) {
+  const navigate = useNavigate();
+  const onLogout = () => {    
 
     window.localStorage.removeItem("user");
     window.localStorage.removeItem("token");
 
-    setregistered(true);
+    if (!window.localStorage.removeItem("token")) {
+      navigate("/login");
+    }
   };
   return (
     <div>
