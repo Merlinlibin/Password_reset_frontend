@@ -76,7 +76,7 @@ function Login({
 
   const handleregister = () => {
           event.preventDefault();
-         navigate("/register");
+         navigate("/");
         };
 
 
