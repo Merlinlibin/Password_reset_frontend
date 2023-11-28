@@ -65,6 +65,7 @@ function Login({
             }
           } catch (e) {
             console.log("Error logging in...", e.response.status);
+            setloading(true);
             if ((e.response.status = 401)) {
               errMailref.current.className = "errMail d-block";
               errpassref.current.className = "errpass d-block";
