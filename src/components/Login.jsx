@@ -89,11 +89,14 @@ function Login({
               console.log("mail sent successfully");
               console.log(response);
               setresetmail("");
+              setpopup(false);
+              alert("Please check the mail for reset link...")
             }
         } catch (e) {
           console.log("email dosent match please register", e.response.status);
           resetmailref.current.style.visibility = "visible";
           setresetmail("");
+          
         }
   };
   return (

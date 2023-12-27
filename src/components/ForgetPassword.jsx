@@ -26,7 +26,7 @@ function ForgetPassword() {
 
   const handleresetpass = async () => {
     event.preventDefault();
-    console.log(resetobj);
+   
 
     setloading(true);
     
@@ -34,6 +34,7 @@ function ForgetPassword() {
 
     try {
       const response = await axios.patch(resetUrl, resetobj);
+      console.log(response);
       const data = await response.data;
       console.log(data);
       if (response.status === 200) {
