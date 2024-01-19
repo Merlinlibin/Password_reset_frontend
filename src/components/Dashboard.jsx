@@ -46,7 +46,7 @@ function Dashboard({}) {
             <p class="work-heading">Projects</p>
             <p class="work-text">
               I have worked on many projects and I am very proud of them. I am a
-              very good developer and I am always looking for new projects.
+              very good developer and I am always new .
             </p>
           </div>
           <div class="work">
@@ -62,8 +62,7 @@ function Dashboard({}) {
             <p class="work-heading">Network</p>
             <p class="work-text">
               I have a lot of network skills and I am very good at them. I am
-              very good at networking and I am always looking for new network
-              skills.
+              very good at networking and I am always looking for new.
             </p>
           </div>
         </div>
@@ -88,18 +87,7 @@ function Dashboard({}) {
             <a href="#">About</a>
             <a href="#">Contact</a>
           </div>
-          <div class="links">
-            <span>Social Links</span>
-            <a href="#">
-              <i class="fab fa-facebook"></i>
-            </a>
-            <a href="#">
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a href="#">
-              <i class="fab fa-instagram"></i>
-            </a>
-          </div>
+          
         </div>
       </footer>
     </div>
