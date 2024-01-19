@@ -6,21 +6,14 @@ import "../styles/Login.css";
 import { Oval } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 
-function Login({
-  token,
-  settoken,
-  user,
-  setuser,
-  logobj,
-  setlogobj,
-}) {
+function Login({ token, settoken, user, setuser, logobj, setlogobj }) {
   const loginUrl = "https://loginbackend-7ar3.onrender.com/api/login/";
   const emailresetUrl = "https://loginbackend-7ar3.onrender.com/api/mailReset";
   const passref = useRef("");
   const eyeref = useRef("");
   const errMailref = useRef("");
   const errpassref = useRef("");
-  const resetmailref=useRef("")
+  const resetmailref = useRef("");
   const [loading, setloading] = useState(false);
   const [popup, setpopup] = useState(false);
   const [resetmail, setresetmail] = useState("");
@@ -39,65 +32,61 @@ function Login({
     }
   };
   const userLogin = async () => {
-          event.preventDefault();
-          setloading(true);
+    event.preventDefault();
+    setloading(true);
 
-          try {
-            const response = await axios.post(loginUrl, logobj);
+    try {
+      const response = await axios.post(loginUrl, logobj);
 
-            const data = await response.data;
-            console.log(data);
-            if (response.status === 200) {
-              console.log("User logged in successfully");
-              console.log(response.status);
-              setlogobj({
-                email: "",
-                password: "",
-              });
-              settoken(data.token);
-              setuser(data);
-              setloading(false);
-              window.localStorage.setItem("token", data.token);
-              window.localStorage.setItem("user", JSON.stringify(data));
-              if (window.localStorage.getItem("token")) {
-                return navigate("/home");
-              }
-            }
-          } catch (e) {
-            console.log("Error logging in...", e.response.status);
-            setloading(false);
-            if ((e.response.status = 401)) {
-              errMailref.current.className = "errMail d-block";
-              errpassref.current.className = "errpass d-block";
-            }
-          }
-          
-        };
-
+      const data = await response.data;
+      console.log(response);
+      if (response.status === 200) {
+        console.log("User logged in successfully");
+        console.log(response.status);
+        setlogobj({
+          email: "",
+          password: "",
+        });
+        settoken(data.token);
+        setuser(data);
+        setloading(false);
+        window.localStorage.setItem("token", data.token);
+        window.localStorage.setItem("user", JSON.stringify(data));
+        if (window.localStorage.getItem("token")) {
+          return navigate("/home");
+        }
+      }
+    } catch (e) {
+      console.log("Error logging in...", e.response);
+      setloading(false);
+      if ((e.response.status = 401)) {
+        errMailref.current.className = "errMail d-block";
+        errpassref.current.className = "errpass d-block";
+      }
+    }
+  };
 
   const handleregister = () => {
-          event.preventDefault();
-         navigate("/");
-        };
-
+    event.preventDefault();
+    navigate("/");
+  };
 
   const handleresetpass = async () => {
-        try {
-          console.log(resetmail);
-          const response = await axios.post(emailresetUrl, { email: resetmail });
-            if (response.status === 200) {
-              console.log("mail sent successfully");
-              console.log(response);
-              setresetmail("");
-              setpopup(false);
-              alert("Please check the mail for reset link...")
-            }
-        } catch (e) {
-          console.log("email dosent match please register", e.response.status);
-          resetmailref.current.style.visibility = "visible";
-          setresetmail("");
-          
-        }
+    try {
+      console.log(resetmail);
+      const response = await axios.post(emailresetUrl, { email: resetmail });
+      if (response.status === 200) {
+        console.log("mail sent successfully");
+        console.log(response);
+        setresetmail("");
+        setpopup(false);
+        alert("Please check the mail for reset link...");
+      }
+    } catch (e) {
+      console.log("email dosent match please register", e.response.status);
+      resetmailref.current.style.visibility = "visible";
+      setresetmail("");
+    }
   };
   return (
     <div className="main">
@@ -132,9 +121,9 @@ function Login({
                   name="password"
                   className="form-control my-2"
                   placeholder="Password"
-                  value={logobj.password}
+                  value={logobj.Password}
                   onChange={(e) => {
-                    setlogobj({ ...logobj, password: e.target.value });
+                    setlogobj({ ...logobj, Password: e.target.value });
                   }}
                 />
                 <div className="errpass d-none" ref={errpassref}>
@@ -192,7 +181,8 @@ function Login({
                       color: "red",
                       fontSize: "20px",
                       visibility: "hidden",
-                    }} ref={resetmailref}>
+                    }}
+                    ref={resetmailref}>
                     <p>! Invalid emailemail, please register</p>
                   </div>
                   <div>

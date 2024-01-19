@@ -159,7 +159,7 @@ function Register({
                     <Oval color="white" height="25" width="25" />
                   </div>
                 ) : (
-                  "Login"
+                  "Register"
                 )}
               </button>
             </div>

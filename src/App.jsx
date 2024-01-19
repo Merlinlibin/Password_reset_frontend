@@ -17,7 +17,7 @@ function App() {
   });
   const [logobj, setlogobj] = useState({
     email: "",
-    password: "",
+    Password: "",
   });
 
   useEffect(() => {
