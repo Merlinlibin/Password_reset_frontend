@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 function ForgetPassword() {
   const [loading, setloading] = useState(false);
-  const resetUrl = "http://localhost:3000/api/passwordReset/";
+  const resetUrl = "https://loginbackend-7ar3.onrender.com/api/passwordReset/";
   const passref = useRef("");
   const eyeref = useRef("");
   const [resetobj, setresetobj] = useState({
