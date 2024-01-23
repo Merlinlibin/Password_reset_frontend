@@ -8,8 +8,15 @@ function ForgetPassword() {
   const resetUrl = "http://localhost:3000/api/passwordReset/";
   const passref = useRef("");
   const eyeref = useRef("");
-  const [resetobj, setresetobj] = useState({ email: "", newPassword: "" });
+  const [resetobj, setresetobj] = useState({
+    email: "",
+    newPassword: "",
+    OTP: "",
+  });
   const navigate = useNavigate();
+  const errMailref = useRef("");
+  const errpassref = useRef("");
+  const OTPref = useRef("");
 
   const togglepass = () => {
     if (
@@ -26,10 +33,9 @@ function ForgetPassword() {
 
   const handleresetpass = async () => {
     event.preventDefault();
-   
 
     setloading(true);
-    
+
     console.log("Resetting the user password...");
 
     try {
@@ -43,6 +49,7 @@ function ForgetPassword() {
         setresetobj({
           email: "",
           newPassword: "",
+          OTP: "",
         });
         setloading(false);
         navigate("/login");
@@ -50,9 +57,51 @@ function ForgetPassword() {
     } catch (e) {
       setloading(false);
       console.log("Error logging in...", e);
-   }
-    
+    }
   };
+  const errMailStatus = async (e) => {
+    await axios
+      .get("https://loginbackend-7ar3.onrender.com/api/users/")
+      .then((res) => res.data)
+      .then((users) =>
+        users.find((user) => {
+          if (user.email === e.target.value) {
+            return user;
+          }
+        })
+      )
+      .then((user) => {
+       // console.log(user);
+        if (!user) {
+          return (errMailref.current.className = "errMail d-block");
+        }
+        if (user.email === e.target.value) {
+          errMailref.current.className = "errMail d-none";
+        }
+      });
+  };
+
+  const errOTPStatus = async (e) => {
+    await axios
+      .get("https://loginbackend-7ar3.onrender.com/api/users/")
+      .then((res) => res.data)
+      .then((users) =>
+        users.find((user) => {
+          if (user.email == resetobj.email) {
+            return user;
+          }
+        })
+      )
+      .then((user) => {
+       // console.log(user);
+        if (user.randomStr == e.target.value) {
+          OTPref.current.className = "errpass d-none";
+        } else {
+          OTPref.current.className = "errpass d-block";
+        }
+      });
+  };
+
   return (
     <div className="main">
       <div className="container  sub">
@@ -69,10 +118,14 @@ function ForgetPassword() {
                   className="form-control my-2"
                   placeholder="enter your email... "
                   value={resetobj.email}
-                  onChange={(e) =>
-                    setresetobj({ ...resetobj, email: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setresetobj({ ...resetobj, email: e.target.value });
+                    errMailStatus(e);
+                  }}
                 />
+                <div className="errMail d-none" ref={errMailref}>
+                  Email dosent exist please register!
+                </div>
               </div>
             </div>
             <div className="form-group my-3">
@@ -91,10 +144,33 @@ function ForgetPassword() {
                     setresetobj({ ...resetobj, newPassword: e.target.value })
                   }
                 />
+                <div className="errpass d-none" ref={errpassref}>
+                  Please enter the valid password!!
+                </div>
                 <i
                   className="bi bi-eye-slash eye"
                   onClick={togglepass}
                   ref={eyeref}></i>
+              </div>
+            </div>
+            <div className="form-group my-3">
+              <label htmlFor="OTP">OTP</label>
+              <div className="OTP">
+                <input
+                  required
+                  type="text"
+                  name="OTP"
+                  className="form-control my-2"
+                  placeholder="enter your OTP... "
+                  value={resetobj.OTP}
+                  onChange={(e) => {
+                    setresetobj({ ...resetobj, OTP: e.target.value });
+                    errOTPStatus(e);
+                  }}
+                />
+                <div className="errOTP d-none" ref={OTPref}>
+                  Please enter the valid OTP!!
+                </div>
               </div>
             </div>
             <div className="mt-2 mb-2 text-center">

@@ -5,10 +5,12 @@ import axios from "axios";
 import "../styles/Login.css";
 import { Oval } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
+import bcrypt from "bcryptjs-react";
 
 function Login({ token, settoken, user, setuser, logobj, setlogobj }) {
   const loginUrl = "https://loginbackend-7ar3.onrender.com/api/login/";
   const emailresetUrl = "https://loginbackend-7ar3.onrender.com/api/mailReset";
+  const getUsers = "https://loginbackend-7ar3.onrender.com/api/users/";
   const passref = useRef("");
   const eyeref = useRef("");
   const errMailref = useRef("");
@@ -39,7 +41,7 @@ function Login({ token, settoken, user, setuser, logobj, setlogobj }) {
       const response = await axios.post(loginUrl, logobj);
 
       const data = await response.data;
-      console.log(response);
+      //console.log(response);
       if (response.status === 200) {
         console.log("User logged in successfully");
         console.log(response.status);
@@ -59,11 +61,56 @@ function Login({ token, settoken, user, setuser, logobj, setlogobj }) {
     } catch (e) {
       console.log("Error logging in...", e.response);
       setloading(false);
-      if ((e.response.status = 401)) {
-        errMailref.current.className = "errMail d-block";
-        errpassref.current.className = "errpass d-block";
-      }
+      
     }
+  };
+  const errMailStatus = async (e) => {
+    await axios
+      .get("https://loginbackend-7ar3.onrender.com/api/users/")
+      .then((res) => res.data)
+      .then((users) =>
+        users.find((user) => {
+          if (user.email === e.target.value) {
+            return user;
+          }
+        })
+      )
+      .then((user) => {
+        //console.log(user);
+        if (!user) {
+          return (errMailref.current.className = "errMail d-block");
+        }
+        if (user.email === e.target.value) {
+          errMailref.current.className = "errMail d-none";
+        }
+      });
+  };
+  const errPassStatus = async (e) => {
+    await axios
+      .get("https://loginbackend-7ar3.onrender.com/api/users/")
+      .then((res) => res.data)
+      .then((users) =>
+        users.find((user) => {
+          if (user.email == logobj.email) {
+            return user;
+          }
+        })
+      )
+      .then(async (user) => {
+        //console.log(user);
+        if (user.email == logobj.email) {
+          const passCheck = await bcrypt.compare(
+            e.target.value,
+            user.passwordHash
+          );
+          //console.log(passCheck);
+          if (passCheck) {
+            errpassref.current.className = "errpass d-none";
+          } else {
+            errpassref.current.className = "errpass d-block";
+          }
+        }
+      });
   };
 
   const handleregister = () => {
@@ -74,7 +121,7 @@ function Login({ token, settoken, user, setuser, logobj, setlogobj }) {
   const handleresetpass = async () => {
     try {
       console.log(resetmail);
-      const response = await axios.post(emailresetUrl, { email: resetmail });
+      const response = await axios.put(emailresetUrl, { email: resetmail });
       if (response.status === 200) {
         console.log("mail sent successfully");
         console.log(response);
@@ -105,10 +152,11 @@ function Login({ token, settoken, user, setuser, logobj, setlogobj }) {
                 value={logobj.email}
                 onChange={(e) => {
                   setlogobj({ ...logobj, email: e.target.value });
+                  errMailStatus(e);
                 }}
               />
               <div className="errMail d-none" ref={errMailref}>
-                email dosent exist please register!
+                Email dosent exist please register!
               </div>
             </div>
             <div className="form-group my-3">
@@ -124,10 +172,11 @@ function Login({ token, settoken, user, setuser, logobj, setlogobj }) {
                   value={logobj.Password}
                   onChange={(e) => {
                     setlogobj({ ...logobj, Password: e.target.value });
+                    errPassStatus(e);
                   }}
                 />
                 <div className="errpass d-none" ref={errpassref}>
-                  Password dosenot match!!!
+                  Please enter the valid password!!
                 </div>
                 <i
                   className="bi bi-eye-slash eye"

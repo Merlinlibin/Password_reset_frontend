@@ -42,7 +42,7 @@ function Register({
 
       if (response.status === 200) {
         console.log("User registered in successfully");
-        console.log(data);
+       // console.log(data);
         setRegisterFormData({
           username: "",
           email: "",
